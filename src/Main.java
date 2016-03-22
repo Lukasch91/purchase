@@ -9,6 +9,7 @@ public class Main {
         CashRegister cashRegister = new CashRegister();
 
 
+
         Console console = System.console();
         if (console == null) {
             System.err.println("No console.");
@@ -20,7 +21,9 @@ public class Main {
             String name = console.readLine("1 - Start purchase    \n" +
                     "2 - Scan item         \n" +
                     "3 - End purchase      \n" +
-                    "4 - Exit                ");
+                    "4 - WithDraw      \n" +
+                    "5 - Current cash register balance     \n" +
+                    "6 - Exit                ");
 
             if (name.equals("1")) {
                 cashRegister.startPurchase();
@@ -29,16 +32,20 @@ public class Main {
 
                 System.out.println("Number of items");
                 Integer numberOfItems = Integer.parseInt(input.next());
-                cashRegister.scan(Long.parseLong(code), numberOfItems);
+                cashRegister.scanItem(Long.parseLong(code), numberOfItems);
             } else if (name.equals("2")) {
                 String code = console.readLine("Enter code: ");
                 Scanner input = new Scanner(System.in);
                 System.out.println("Number of items");
                 Integer numberOfItems = Integer.parseInt(input.next());
-                cashRegister.scan(Long.parseLong(code), numberOfItems);
+                cashRegister.scanItem(Long.parseLong(code), numberOfItems);
             } else if (name.equals("3")) {
-                cashRegister.printBill();
+                cashRegister.endPurchase();
             } else if (name.equals("4")) {
+                cashRegister.withdrawals();
+            } else if (name.equals("5")) {
+                cashRegister.currentCashBalance();
+            } else if (name.equals("6")) {
                 keepRunning = false;
             }
 
