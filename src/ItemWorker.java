@@ -1,7 +1,5 @@
-import model.item.AmountDiscount;
-import model.item.Discount;
-import model.item.Item;
-import model.item.PercentageDiscount;
+import jdk.nashorn.internal.ir.IfNode;
+import model.item.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,26 +24,34 @@ public class ItemWorker {
                 String code = parts[0];
                 String name = parts[1];
                 String price = parts[2];
-                String discountType = parts[3];
-                String discountAmount = parts[4];
-                Double doubleDiscountAmount = Double.parseDouble(discountAmount);
                 Long codeLong = Long.parseLong(code);
                 Double priceDouble = Double.parseDouble(price);
-
-
                 Discount discount = null;
-                if("Z".equals(discountType)) {
-                     discount = new AmountDiscount();
-                }else if ("F".equals(discountType)) {
-                     discount = new PercentageDiscount();
+                if (parts.length > 3) {
+                    String discountType = parts[3];
+                    String discountAmount = parts[4];
 
-                } else {
-                    discount = new Discount();
+                    Double doubleDiscountAmount = Double.parseDouble(discountAmount);
+
+                    if (doubleDiscountAmount < 0) {
+                        discount = new NoDiscount();
+                    }
+
+                    if ("Z".equals(discountType)) {
+                        discount = new AmountDiscount(doubleDiscountAmount);
+                    } else if ("F".equals(discountType)) {
+                        discount = new PercentageDiscount(doubleDiscountAmount);
+                    }
+
+                }
+
+                if (discount == null) {
+                    discount = new NoDiscount();
                 }
                 Item item = new Item(codeLong, name, priceDouble, discount);
                 itemsArrayList.add(item);
-
             }
+
         } catch (FileNotFoundException exception) {
             System.out.println("File Not Found");
         } catch (java.io.IOException exception) {

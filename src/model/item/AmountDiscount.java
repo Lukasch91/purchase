@@ -3,7 +3,9 @@ package model.item;
 
 public class AmountDiscount extends Discount {
 
-
+    public AmountDiscount(Double amount) {
+        super(amount);
+    }
 
     @Override
     public Double applyDiscount(Double price) {

@@ -1,0 +1,6 @@
+
+interface Scanner {
+    int scannerWorker();
+
+
+}

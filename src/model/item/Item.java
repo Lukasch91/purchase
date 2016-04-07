@@ -4,9 +4,7 @@ public class Item {
     private Long itemCode;
     private String itemName;
     private Double itemPrice;
-
     private Discount discount;
-
 
 
     public Item(Long itemCode, String itemName, Double itemPrice, Discount discount) {
@@ -25,8 +23,12 @@ public class Item {
     }
 
     public Double getItemPrice() {
-        return discount.applyDiscount(itemPrice);
+        Double priceWithDiscount = discount.calculateDiscount(itemPrice);
+        if (priceWithDiscount < 0) {
+            throw new RuntimeException("Item price under 0.00");
+        }
+        return priceWithDiscount;
     }
 
-
 }
+

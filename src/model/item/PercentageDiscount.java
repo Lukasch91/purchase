@@ -2,10 +2,12 @@ package model.item;
 
 public class PercentageDiscount extends Discount {
 
-
+    public PercentageDiscount(Double amount) {
+        super(amount);
+    }
 
     @Override
     public Double applyDiscount(Double price) {
-        return price - price * discountPrecentage;
+        return price - price * amount / 100;
     }
 }
