@@ -3,11 +3,23 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String args[]) {
-        new Main().userInteraction();
+        //--manual
+        String arg = "--default";
+        if (args.length > 0) {
+            arg = args[0];
+        }
+        new Main().userInteraction(arg);
     }
 
-    public void userInteraction() {
-        CashRegister cashRegister = new CashRegister();
+    public void userInteraction(String mode) {
+
+        CashRegister cashRegister;
+        if (mode.equals("--manual")) {
+            cashRegister = new CashRegister(new ManualScanner());
+        } else {
+            cashRegister = new CashRegister(new RandomScanner());
+        }
+
 
         boolean keepRunning = true;
         while (keepRunning) {
@@ -21,20 +33,36 @@ public class Main {
             String name = readInput();
 
             if (name.equals("1")) {
-                cashRegister.startPurchase();
-                printToScreen("Enter code: ");
-                String code = readInput();
+                if (mode.equals("--manual")) {
+                    cashRegister.startPurchase();
+                    printToScreen("Enter code: ");
+                    String code = readInput();
 
-                printToScreen("Number of items");
-                Integer numberOfItems = Integer.parseInt(readInput());
+                    printToScreen("Number of items");
+                    Integer numberOfItems = Integer.parseInt(readInput());
 
-                cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                    cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                } else {
+                    cashRegister.startPurchase();
+                    printToScreen("Number of items");
+
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    cashRegister.scanItem(numberOfItems);
+                }
+
             } else if (name.equals("2")) {
-                printToScreen("Enter code: ");
-                String code = readInput();
-                printToScreen("Number of items");
-                Integer numberOfItems = Integer.parseInt(readInput());
-                cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                if (mode.equals("--manual")) {
+                    printToScreen("Enter code: ");
+                    String code = readInput();
+                    printToScreen("Number of items");
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                } else
+
+                    printToScreen("Number of items");
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    cashRegister.scanItem(numberOfItems);
+
             } else if (name.equals("3")) {
                 cashRegister.endPurchase();
             } else if (name.equals("4")) {
@@ -43,15 +71,11 @@ public class Main {
                 cashRegister.currentCashBalance();
             } else if (name.equals("6")) {
                 keepRunning = false;
-            } else if (name.equals("7")){
-                ScannerWorker sw = new ScannerWorker();
-                printToScreen("Number of items");
-                Integer numberOfItems = Integer.parseInt(readInput());
-                cashRegister.scanItem((long) sw.randomNumber, numberOfItems);
             }
-
         }
+
     }
+
 
     private void printToScreen(String result) {
         System.out.println(result);

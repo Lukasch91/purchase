@@ -1,6 +1,6 @@
+import model.item.Item;
 
 interface Scanner {
-    int scannerWorker();
-
+    Item scan(Long itemCode);
 
 }

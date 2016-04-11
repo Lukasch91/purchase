@@ -1,8 +1,11 @@
+import model.item.*;
+
 import java.io.*;
 import java.util.ArrayList;
 
 
 public class FileWorker {
+
 
     public void addToFile(String printText) {
 
@@ -24,7 +27,7 @@ public class FileWorker {
         }
     }
 
-    public ArrayList<Double> getFromFile() {
+    public ArrayList<Double> getBalanceRecords() {
         BufferedReader br = null;
         FileInputStream fstream = null;
         ArrayList<Double> cashBalanceArray = new ArrayList<Double>();
@@ -54,6 +57,65 @@ public class FileWorker {
             closeReadResources(br, fstream);
         }
         return cashBalanceArray;
+    }
+
+    public ArrayList<Item> loadItem() {
+        ArrayList<Item> itemsArrayList = new ArrayList<Item>();
+        BufferedReader br = null;
+        try {
+            FileInputStream fstream = new FileInputStream("C:/Hello_world/data.txt");
+            br = new BufferedReader(new InputStreamReader(fstream));
+
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                String[] parts = strLine.split(";");
+                String code = parts[0];
+                String name = parts[1];
+                String price = parts[2];
+                Long codeLong = Long.parseLong(code);
+                Double priceDouble = Double.parseDouble(price);
+                Discount discount = null;
+                if (parts.length > 3) {
+                    String discountType = parts[3];
+                    String discountAmount = parts[4];
+
+                    Double doubleDiscountAmount = Double.parseDouble(discountAmount);
+
+                    if (doubleDiscountAmount < 0) {
+                        discount = new NoDiscount();
+                    }
+
+                    if ("Z".equals(discountType)) {
+                        discount = new AmountDiscount(doubleDiscountAmount);
+                    } else if ("F".equals(discountType)) {
+                        discount = new PercentageDiscount(doubleDiscountAmount);
+                    }
+
+                }
+
+                if (discount == null) {
+                    discount = new NoDiscount();
+                }
+                Item item = new Item(codeLong, name, priceDouble, discount);
+                itemsArrayList.add(item);
+            }
+            return itemsArrayList;
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File Not Found");
+            throw new RuntimeException(e);
+        } catch (java.io.IOException e) {
+            System.out.println("Error");
+            throw new RuntimeException(e);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (java.io.IOException exception) {
+                    System.out.println("Error");
+                }
+            }
+        }
     }
 
     private void closeReadResources(BufferedReader br, FileInputStream fstream) {

@@ -2,21 +2,31 @@ import model.Entry;
 import model.item.Item;
 import model.Purchase;
 
-import java.util.Scanner;
 
 public class CashRegister {
 
 
     private Purchase purchase;
-    private FileWorker fileWorker = new FileWorker();
+    private DatabaseWorker database = new DatabaseWorker();
+    private Scanner scanner;
 
+    public CashRegister(Scanner scanner) {
+        this.scanner = scanner;
+    }
 
     public void scanItem(Long itemCode, Integer numberOfItems) {
-        ItemWorker itemWorker = new ItemWorker();
-        Item item = itemWorker.getItemByCode(itemCode);
+        Item item = scanner.scan(itemCode);
+        if (item == null) {
+            System.out.println("Item not found");
+            return;
+        }
         Entry entry = new Entry(item, numberOfItems);
         purchase.addItemToList(entry);
+    }
 
+    public void scanItem(Integer numberOfItems) {
+        Item item = scanner.scan(null);
+        purchase.addItemToList(new Entry(item, numberOfItems));
     }
 
     public void startPurchase() {
@@ -32,28 +42,27 @@ public class CashRegister {
                 String printText = entry.getItem().getItemName() + ";" + entry.getItem().getItemPrice() + ";" + entry.getNumberOfItems() +
                         ";" + entry.sumOfItem();
 
-                fileWorker.addToFile(printText);
+                database.addToFile(printText);
             }
         System.out.println("Sum:" + purchase.sumPrices());
         String printText = "Sum;" + purchase.sumPrices();
-        fileWorker.addToFile(printText);
+        database.addToFile(printText);
     }
 
 
     public void withdrawals() {
-        Scanner scanner = new Scanner(System.in);
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
         System.out.println("Withdrawal sum:");
         Double withdrawal = scanner.nextDouble();
         String printText = "Withdrawal;" + -withdrawal;
-        fileWorker.addToFile(printText);
+        database.addToFile(printText);
 
     }
 
 
     public void currentCashBalance() {
-        fileWorker.getFromFile();
         Double sum = 0.00;
-        for (Double aGetFromFile : fileWorker.getFromFile()) {
+        for (Double aGetFromFile : database.getBalanceRecords()) {
             sum = sum + aGetFromFile;
         }
         System.out.println("Current balance:" + sum);
