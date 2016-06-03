@@ -1,3 +1,5 @@
+package cashRegister;
+
 import model.item.Item;
 
 interface Scanner {

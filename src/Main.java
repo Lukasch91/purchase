@@ -1,3 +1,8 @@
+import cashRegister.CashRegister;
+import cashRegister.ManualScanner;
+import cashRegister.RandomScanner;
+import dao.ItemDAO;
+
 import java.util.Scanner;
 
 
@@ -32,45 +37,53 @@ public class Main {
                     "6 - Exit                ");
             String name = readInput();
 
-            if (name.equals("1")) {
-                if (mode.equals("--manual")) {
-                    cashRegister.startPurchase();
-                    printToScreen("Enter code: ");
-                    String code = readInput();
+            switch (name) {
+                case "1":
+                    if (mode.equals("--manual")) {
+                        cashRegister.startPurchase();
+                        printToScreen("Enter code: ");
+                        String code = readInput();
 
-                    printToScreen("Number of items");
-                    Integer numberOfItems = Integer.parseInt(readInput());
+                        printToScreen("Number of items");
+                        Integer numberOfItems = Integer.parseInt(readInput());
+                        Long itemCode = Long.parseLong(code);
 
-                    cashRegister.scanItem(Long.parseLong(code), numberOfItems);
-                } else {
-                    cashRegister.startPurchase();
-                    printToScreen("Number of items");
+                        cashRegister.scanItem(itemCode, numberOfItems);
+                    } else {
+                        cashRegister.startPurchase();
+                        printToScreen("Number of items");
 
+                        Integer numberOfItems = Integer.parseInt(readInput());
+                        cashRegister.scanItem(numberOfItems);
+                    }
+
+                    break;
+                case "2":
+                    if (mode.equals("--manual")) {
+                        printToScreen("Enter code: ");
+                        String code = readInput();
+                        printToScreen("Number of items");
+                        Integer numberOfItems = Integer.parseInt(readInput());
+                        cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                    } else
+
+                        printToScreen("Number of items");
                     Integer numberOfItems = Integer.parseInt(readInput());
                     cashRegister.scanItem(numberOfItems);
-                }
 
-            } else if (name.equals("2")) {
-                if (mode.equals("--manual")) {
-                    printToScreen("Enter code: ");
-                    String code = readInput();
-                    printToScreen("Number of items");
-                    Integer numberOfItems = Integer.parseInt(readInput());
-                    cashRegister.scanItem(Long.parseLong(code), numberOfItems);
-                } else
-
-                    printToScreen("Number of items");
-                    Integer numberOfItems = Integer.parseInt(readInput());
-                    cashRegister.scanItem(numberOfItems);
-
-            } else if (name.equals("3")) {
-                cashRegister.endPurchase();
-            } else if (name.equals("4")) {
-                cashRegister.withdrawals();
-            } else if (name.equals("5")) {
-                cashRegister.currentCashBalance();
-            } else if (name.equals("6")) {
-                keepRunning = false;
+                    break;
+                case "3":
+                    cashRegister.endPurchase();
+                    break;
+                case "4":
+                    ItemDAO.addWithdrawalToDatabase();
+                    break;
+                case "5":
+                    ItemDAO.getCurrentBalance();
+                    break;
+                case "6":
+                    keepRunning = false;
+                    break;
             }
         }
 

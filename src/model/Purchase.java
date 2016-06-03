@@ -1,13 +1,11 @@
 package model;
 
-import model.Entry;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Purchase {
 
-    private List<Entry> itemsArrayList = new ArrayList<Entry>();
+    private List<Entry> itemsArrayList = new ArrayList<>();
 
 
     public void addItemToList(Entry entry) {
@@ -22,8 +20,6 @@ public class Purchase {
 
         return sum;
     }
-
-
 
 
     public List<Entry> getItems() {
