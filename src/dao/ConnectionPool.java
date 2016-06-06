@@ -25,6 +25,7 @@ public class ConnectionPool {
             ClassNotFoundException {
         if (connection == null) {
             connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/itemsdatabase", "root", "kempas91");
+            connection.setAutoCommit(false);
             return connection;
 
         }

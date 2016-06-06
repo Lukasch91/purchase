@@ -3,11 +3,12 @@ import cashRegister.ManualScanner;
 import cashRegister.RandomScanner;
 import dao.ItemDAO;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String args[]) throws SQLException, ClassNotFoundException {
         //--manual
         String arg = "--default";
         if (args.length > 0) {
@@ -16,7 +17,7 @@ public class Main {
         new Main().userInteraction(arg);
     }
 
-    public void userInteraction(String mode) {
+    public void userInteraction(String mode) throws SQLException, ClassNotFoundException {
 
         CashRegister cashRegister;
         if (mode.equals("--manual")) {
@@ -37,53 +38,46 @@ public class Main {
                     "6 - Exit                ");
             String name = readInput();
 
-            switch (name) {
-                case "1":
-                    if (mode.equals("--manual")) {
-                        cashRegister.startPurchase();
-                        printToScreen("Enter code: ");
-                        String code = readInput();
+            if (name.equals("1")) {
+                if (mode.equals("--manual")) {
+                    cashRegister.startPurchase();
+                    printToScreen("Enter code: ");
+                    String code = readInput();
 
-                        printToScreen("Number of items");
-                        Integer numberOfItems = Integer.parseInt(readInput());
-                        Long itemCode = Long.parseLong(code);
+                    printToScreen("Number of items");
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    Long itemCode = Long.parseLong(code);
 
-                        cashRegister.scanItem(itemCode, numberOfItems);
-                    } else {
-                        cashRegister.startPurchase();
-                        printToScreen("Number of items");
+                    cashRegister.scanItem(itemCode, numberOfItems);
+                } else {
+                    cashRegister.startPurchase();
+                    printToScreen("Number of items");
 
-                        Integer numberOfItems = Integer.parseInt(readInput());
-                        cashRegister.scanItem(numberOfItems);
-                    }
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    cashRegister.scanItem(numberOfItems);
+                }
 
-                    break;
-                case "2":
-                    if (mode.equals("--manual")) {
-                        printToScreen("Enter code: ");
-                        String code = readInput();
-                        printToScreen("Number of items");
-                        Integer numberOfItems = Integer.parseInt(readInput());
-                        cashRegister.scanItem(Long.parseLong(code), numberOfItems);
-                    } else
+            } else if (name.equals("2")) {
+                if (mode.equals("--manual")) {
+                    printToScreen("Enter code: ");
+                    String code = readInput();
+                    printToScreen("Number of items");
+                    Integer numberOfItems = Integer.parseInt(readInput());
+                    cashRegister.scanItem(Long.parseLong(code), numberOfItems);
+                } else
 
-                        printToScreen("Number of items");
+                    printToScreen("Number of items");
                     Integer numberOfItems = Integer.parseInt(readInput());
                     cashRegister.scanItem(numberOfItems);
 
-                    break;
-                case "3":
-                    cashRegister.endPurchase();
-                    break;
-                case "4":
-                    ItemDAO.addWithdrawalToDatabase();
-                    break;
-                case "5":
-                    ItemDAO.getCurrentBalance();
-                    break;
-                case "6":
-                    keepRunning = false;
-                    break;
+            } else if (name.equals("3")) {
+                cashRegister.endPurchase();
+            } else if (name.equals("4")) {
+                ItemDAO.addWithdrawalToDatabase();
+            } else if (name.equals("5")) {
+                ItemDAO.getCurrentBalance();
+            } else if (name.equals("6")) {
+                keepRunning = false;
             }
         }
 

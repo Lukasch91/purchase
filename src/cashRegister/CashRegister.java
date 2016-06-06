@@ -4,6 +4,8 @@ import model.Entry;
 import model.item.Item;
 import model.Purchase;
 
+import java.sql.SQLException;
+
 
 public class CashRegister {
 
@@ -34,7 +36,7 @@ public class CashRegister {
         purchase = new Purchase();
     }
 
-    public void endPurchase() {
+    public void endPurchase() throws SQLException, ClassNotFoundException {
         purchase.getItems().stream().filter(entry -> entry != null).forEach(entry -> System.out.println(entry.getItem().getItemName()
                 + "..." + entry.getItem().getItemPrice() + "..." + entry.getNumberOfItems() +
                 "..." + entry.sumOfItem()));

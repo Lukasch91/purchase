@@ -174,14 +174,15 @@ public class ItemDAO implements DataWorker {
     }
 
 
-    public static void addToDatabase(Purchase purchase) {
+    public static void addToDatabase(Purchase purchase) throws SQLException {
         PreparedStatement stmt = null;
+        Connection conn = null;
         try {
             for (Entry entry : purchase.getItems())
                 if (entry != null) {
                     String sql = "select max(id) from itemsdatabase.purchase";
 
-                    Connection conn = ConnectionPool.getInstance().getConnection();
+                    conn = ConnectionPool.getInstance().getConnection();
                     stmt = conn.prepareStatement(sql);
                     ResultSet rs = stmt.executeQuery(sql);
                     if (rs.next()) {
@@ -197,11 +198,14 @@ public class ItemDAO implements DataWorker {
                         stmt.setDouble(4, entry.sumOfItem().intValue());
                         stmt.setInt(5, purchaseId);
                         stmt.executeUpdate();
+                        conn.commit();
                     }
                 }
 
 
         } catch (Exception e) {
+            assert conn != null;
+            conn.rollback();
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
@@ -209,19 +213,25 @@ public class ItemDAO implements DataWorker {
             try {
                 if (stmt != null)
                     stmt.close();
+                assert conn != null;
+                conn.rollback();
             } catch (SQLException ignored) {
+                assert conn != null;
+                conn.rollback();
             }
 
         }
     }
 
-    public static void addWithdrawalToDatabase() {
+    public static void addWithdrawalToDatabase() throws SQLException {
         PreparedStatement stmt = null;
+        Connection conn = null;
         try {
 
             String sql = "INSERT INTO itemsdatabase.purchase (id, date, type, sum) VALUES (NULL, ?, 'W', ?);";
-            Connection conn = ConnectionPool.getInstance().getConnection();
+            conn = ConnectionPool.getInstance().getConnection();
             stmt = conn.prepareStatement(sql);
+            conn.commit();
             try {
 
                 Double withdrawal = CashRegister.withdrawals();
@@ -234,6 +244,7 @@ public class ItemDAO implements DataWorker {
                 stmt.setString(1, currentTime);
                 stmt.setDouble(2, -withdrawal);
             } catch (SQLException e) {
+                conn.rollback();
                 e.printStackTrace();
             }
 
@@ -241,12 +252,16 @@ public class ItemDAO implements DataWorker {
 
         } catch (Exception e) {
             e.printStackTrace();
+            assert conn != null;
+            conn.rollback();
             throw new RuntimeException(e);
         } finally {
 
             try {
                 if (stmt != null)
                     stmt.close();
+                assert conn != null;
+                conn.rollback();
             } catch (SQLException ignored) {
             }
 
